@@ -29,28 +29,135 @@
       font-size: 22px;
     }
 
+    /* 일반 타이머 / 뽀모도로 모드 전환 */
+    .mode-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      background: #f0efed;
+    }
+
+    .mode-tabs button {
+      margin: 0;
+      border: 0;
+      background: transparent;
+      color: #66635f;
+    }
+
+    .mode-tabs button[aria-pressed="true"] {
+      background: #ffffff;
+      color: #2c2c2b;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    /* 타이머 상자: 상태에 따라 색이 바뀝니다. */
+    #timer-box {
+      margin: 0 0 16px;
+      padding: 16px 12px;
+      border-radius: 16px;
+      text-align: center;
+      background: #f0efed;
+      color: #2c2c2b;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    #timer-box.work {
+      background: #b8322a;
+      color: #ffffff;
+    }
+
+    #timer-box.break {
+      background: #2a7a52;
+      color: #ffffff;
+    }
+
+    #phase {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
     /* 남은 시간이 작은 화면에서도 크게 보이도록 설정합니다. */
     #display {
-      margin: 0 0 16px;
-      text-align: center;
+      margin: 0;
       font-size: clamp(40px, 14vw, 64px);
       font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
 
-    label {
+    #round {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    label,
+    legend {
       display: block;
       margin-bottom: 6px;
+      padding: 0;
       font-weight: 600;
     }
 
-    input {
+    input[type="number"] {
       width: 100%;
       min-height: 44px;
       padding: 10px 12px;
       border: 1px solid #a8a6a2;
       border-radius: 8px;
       font: inherit;
+    }
+
+    fieldset {
+      margin: 0 0 12px;
+      padding: 0;
+      border: 0;
+    }
+
+    /* 라디오 버튼을 알약 모양 선택지로 보여줍니다. */
+    .choices {
+      display: flex;
+      gap: 8px;
+    }
+
+    .choice {
+      flex: 1;
+      position: relative;
+    }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .choice span {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #a8a6a2;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .choice input:checked + span {
+      border-color: #2c2c2b;
+      background: #2c2c2b;
+      color: #ffffff;
+    }
+
+    .choice input:focus-visible + span {
+      outline: 3px solid #81b7e7;
+      outline-offset: 2px;
+    }
+
+    .choice input:disabled + span {
+      opacity: 0.55;
     }
 
     .buttons {
@@ -96,13 +203,17 @@
       font-weight: 600;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         color: #ffffff;
         background: #191919;
       }
 
-      input {
+      input[type="number"] {
         color: #ffffff;
         background: #202020;
         border-color: #999999;
@@ -113,6 +224,34 @@
         background: #383836;
         border-color: #999999;
       }
+
+      .mode-tabs {
+        background: #2a2a28;
+      }
+
+      .mode-tabs button[aria-pressed="true"] {
+        background: #4a4a47;
+        color: #ffffff;
+      }
+
+      .mode-tabs button {
+        color: #c4c4c4;
+      }
+
+      #timer-box {
+        background: #2a2a28;
+        color: #ffffff;
+      }
+
+      .choice span {
+        border-color: #999999;
+      }
+
+      .choice input:checked + span {
+        border-color: #ffffff;
+        background: #ffffff;
+        color: #191919;
+      }
     }
   </style>
 </head>
@@ -121,20 +260,52 @@
   <main>
     <h1>카운트다운 타이머</h1>
 
-    <p id="display" aria-label="남은 시간">00:00</p>
+    <div class="mode-tabs" role="group" aria-label="타이머 종류">
+      <button id="mode-basic" type="button" aria-pressed="false">일반 타이머</button>
+      <button id="mode-pomo" type="button" aria-pressed="true">뽀모도로</button>
+    </div>
 
-    <label for="minutes">시간 설정 (분)</label>
-    <input
-      id="minutes"
-      type="number"
-      min="1"
-      max="99"
-      step="1"
-      placeholder="1~99분"
-    >
+    <div id="timer-box">
+      <p id="phase">집중 준비</p>
+      <p id="display" aria-label="남은 시간">25:00</p>
+      <p id="round">완료한 뽀모도로 0회</p>
+    </div>
+
+    <!-- 일반 타이머 설정 -->
+    <div id="basic-settings" hidden>
+      <label for="minutes">시간 설정 (분)</label>
+      <input
+        id="minutes"
+        type="number"
+        min="1"
+        max="99"
+        step="1"
+        placeholder="1~99분"
+      >
+    </div>
+
+    <!-- 뽀모도로 설정 -->
+    <div id="pomo-settings">
+      <fieldset>
+        <legend>집중 시간</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="work" value="20"><span>20분</span></label>
+          <label class="choice"><input type="radio" name="work" value="25" checked><span>25분</span></label>
+          <label class="choice"><input type="radio" name="work" value="30"><span>30분</span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>쉬는 시간</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="rest" value="5" checked><span>5분</span></label>
+          <label class="choice"><input type="radio" name="rest" value="10"><span>10분</span></label>
+        </div>
+      </fieldset>
+    </div>
 
     <div class="buttons">
       <button id="start" type="button">시작</button>
+      <button id="pause" type="button" disabled>일시정지</button>
       <button id="reset" type="button">초기화</button>
     </div>
 
@@ -145,86 +316,213 @@
     // 화면에서 사용할 요소를 가져옵니다.
     const minutesInput = document.getElementById("minutes");
     const display = document.getElementById("display");
+    const timerBox = document.getElementById("timer-box");
+    const phaseText = document.getElementById("phase");
+    const roundText = document.getElementById("round");
     const startButton = document.getElementById("start");
+    const pauseButton = document.getElementById("pause");
     const resetButton = document.getElementById("reset");
     const message = document.getElementById("message");
+    const basicSettings = document.getElementById("basic-settings");
+    const pomoSettings = document.getElementById("pomo-settings");
+    const modeBasicButton = document.getElementById("mode-basic");
+    const modePomoButton = document.getElementById("mode-pomo");
+    const radios = document.querySelectorAll('input[type="radio"]');
 
-    // 반복 실행을 멈추기 위한 ID와 타이머 종료 시각입니다.
+    // 상태 값
+    let mode = "pomo";          // "basic" 또는 "pomo"
+    let phase = "idle";         // "idle", "work", "break"
     let intervalId = null;
     let endTime = null;
+    let pausedSeconds = null;   // 일시정지했을 때 남은 초
+    let rounds = 0;             // 완료한 뽀모도로 횟수
 
     // 남은 초를 MM:SS 형태로 바꾸어 보여줍니다.
     function showTime(totalSeconds) {
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
-
       const mm = String(minutes).padStart(2, "0");
       const ss = String(seconds).padStart(2, "0");
       display.textContent = `${mm}:${ss}`;
     }
 
-    // 실행 상태에 따라 입력창과 시작 버튼을 켜거나 끕니다.
+    function getChoice(name) {
+      return Number(document.querySelector(`input[name="${name}"]:checked`).value);
+    }
+
+    // 지금 단계에 맞게 타이머 상자의 색과 글자를 바꿉니다.
+    function paintPhase() {
+      timerBox.classList.remove("work", "break");
+
+      if (mode === "basic") {
+        phaseText.textContent = "일반 타이머";
+        roundText.hidden = true;
+        return;
+      }
+
+      roundText.hidden = false;
+      roundText.textContent = `완료한 뽀모도로 ${rounds}회`;
+
+      if (phase === "work") {
+        timerBox.classList.add("work");
+        phaseText.textContent = "집중 시간";
+      } else if (phase === "break") {
+        timerBox.classList.add("break");
+        phaseText.textContent = "쉬는 시간";
+      } else {
+        phaseText.textContent = "집중 준비";
+      }
+    }
+
+    // 실행 중에는 설정을 바꾸지 못하게 잠급니다.
     function setRunning(isRunning) {
-      minutesInput.disabled = isRunning;
+      const locked = isRunning || pausedSeconds !== null;
+      minutesInput.disabled = locked;
+      radios.forEach(function (radio) { radio.disabled = locked; });
+      modeBasicButton.disabled = locked;
+      modePomoButton.disabled = locked;
       startButton.disabled = isRunning;
+      pauseButton.disabled = !isRunning;
+      startButton.textContent = pausedSeconds !== null ? "재개" : "시작";
+    }
+
+    // 정해진 초만큼 카운트다운을 시작합니다.
+    function runFor(seconds) {
+      clearInterval(intervalId);
+      endTime = Date.now() + seconds * 1000;
+      showTime(seconds);
+      intervalId = setInterval(updateTimer, 250);
+      setRunning(true);
     }
 
     // 종료 시각과 현재 시각의 차이로 남은 시간을 계산합니다.
     function updateTimer() {
-      const remainingSeconds = Math.max(
-        0,
-        Math.ceil((endTime - Date.now()) / 1000)
-      );
-
+      const remainingSeconds = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
       showTime(remainingSeconds);
 
-      if (remainingSeconds === 0) {
-        clearInterval(intervalId);
-        intervalId = null;
+      if (remainingSeconds > 0) return;
+
+      clearInterval(intervalId);
+      intervalId = null;
+
+      if (mode === "basic") {
         endTime = null;
         setRunning(false);
         message.textContent = "완료!";
+        return;
+      }
+
+      // 뽀모도로: 집중이 끝나면 쉬는 시간, 쉬는 시간이 끝나면 다시 집중
+      if (phase === "work") {
+        rounds += 1;
+        phase = "break";
+        message.textContent = "집중 끝! 잠깐 쉬어 가요.";
+        paintPhase();
+        runFor(getChoice("rest") * 60);
+      } else {
+        phase = "work";
+        message.textContent = "쉬는 시간 끝! 다시 집중해 볼까요?";
+        paintPhase();
+        runFor(getChoice("work") * 60);
       }
     }
 
     startButton.addEventListener("click", function () {
-      const rawValue = minutesInput.value;
-      const minutes = Number(rawValue);
-
-      // 빈 값, 정수가 아닌 값, 범위를 벗어난 값은 시작하지 않습니다.
-      if (
-        rawValue === "" ||
-        !minutesInput.validity.valid ||
-        !Number.isInteger(minutes) ||
-        minutes < 1 ||
-        minutes > 99
-      ) {
-        message.textContent = "1~99 사이의 정수를 입력해 주세요.";
+      // 일시정지 상태에서 다시 시작
+      if (pausedSeconds !== null) {
+        const seconds = pausedSeconds;
+        pausedSeconds = null;
+        message.textContent = "";
+        runFor(seconds);
         return;
       }
 
+      if (mode === "basic") {
+        const rawValue = minutesInput.value;
+        const minutes = Number(rawValue);
+
+        // 빈 값, 정수가 아닌 값, 범위를 벗어난 값은 시작하지 않습니다.
+        if (
+          rawValue === "" ||
+          !minutesInput.validity.valid ||
+          !Number.isInteger(minutes) ||
+          minutes < 1 ||
+          minutes > 99
+        ) {
+          message.textContent = "1~99 사이의 정수를 입력해 주세요.";
+          return;
+        }
+
+        message.textContent = "";
+        runFor(minutes * 60);
+        return;
+      }
+
+      // 뽀모도로 시작
+      phase = "work";
       message.textContent = "";
-      setRunning(true);
-
-      // 현재 시각을 기준으로 종료 시각을 정합니다.
-      endTime = Date.now() + minutes * 60 * 1000;
-      showTime(minutes * 60);
-
-      // 화면을 주기적으로 갱신합니다.
-      intervalId = setInterval(updateTimer, 250);
+      paintPhase();
+      runFor(getChoice("work") * 60);
     });
 
-    resetButton.addEventListener("click", function () {
-      // 실행 중인 타이머를 멈추고 처음 상태로 되돌립니다.
+    pauseButton.addEventListener("click", function () {
+      if (intervalId === null) return;
+      clearInterval(intervalId);
+      intervalId = null;
+      pausedSeconds = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      endTime = null;
+      message.textContent = "일시정지했어요.";
+      setRunning(false);
+    });
+
+    // 처음 상태로 되돌립니다.
+    function resetAll() {
       clearInterval(intervalId);
       intervalId = null;
       endTime = null;
-
-      showTime(0);
-      minutesInput.value = "";
+      pausedSeconds = null;
+      phase = "idle";
       message.textContent = "";
+
+      if (mode === "basic") {
+        minutesInput.value = "";
+        showTime(0);
+      } else {
+        showTime(getChoice("work") * 60);
+      }
+
+      paintPhase();
       setRunning(false);
+    }
+
+    resetButton.addEventListener("click", function () {
+      rounds = 0;
+      resetAll();
     });
+
+    // 모드 전환
+    function setMode(newMode) {
+      mode = newMode;
+      modeBasicButton.setAttribute("aria-pressed", String(mode === "basic"));
+      modePomoButton.setAttribute("aria-pressed", String(mode === "pomo"));
+      basicSettings.hidden = mode !== "basic";
+      pomoSettings.hidden = mode !== "pomo";
+      resetAll();
+    }
+
+    modeBasicButton.addEventListener("click", function () { setMode("basic"); });
+    modePomoButton.addEventListener("click", function () { setMode("pomo"); });
+
+    // 집중 시간을 고르면 대기 화면 숫자도 바로 바뀌게 합니다.
+    radios.forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        if (phase === "idle" && pausedSeconds === null) {
+          showTime(getChoice("work") * 60);
+        }
+      });
+    });
+
+    setMode("pomo");
   </script>
 </body>
 </html>
