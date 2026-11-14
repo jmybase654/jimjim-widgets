@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주간 해빗 트래커</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+      color: #2c2c2b;
+      background: #ffffff;
+    }
+
+    main {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 22px;
+    }
+
+    .description {
+      margin: 0 0 16px;
+      color: #66635f;
+      font-size: 14px;
+    }
+
+    .habit-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    #habit-name {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #a8a6a2;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    /* 좁은 화면에서도 날짜와 체크박스를 누르기 편하게 배치합니다. */
+    .days {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .day {
+      display: flex;
+      min-height: 80px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 4px;
+      border: 1px solid #e6e5e3;
+      border-radius: 8px;
+      background: #f9f8f7;
+      cursor: pointer;
+    }
+
+    .day-text {
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .day input {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: #1769b0;
+    }
+
+    input:focus-visible {
+      outline: 3px solid #81b7e7;
+      outline-offset: 2px;
+    }
+
+    #storage-message {
+      margin: 12px 0 0;
+      color: #a33228;
+      font-size: 14px;
+    }
+
+    #storage-message:empty {
+      display: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #ffffff;
+        background: #191919;
+      }
+
+      .description {
+        color: #c4c4c4;
+      }
+
+      #habit-name {
+        color: #ffffff;
+        background: #202020;
+        border-color: #999999;
+      }
+
+      .day {
+        background: #202020;
+        border-color: #666666;
+      }
+
+      #storage-message {
+        color: #ffada5;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>주간 해빗 트래커</h1>
+    <p class="description">이번 주에 실천할 습관을 적고 체크해 보세요.</p>
+
+    <label class="habit-label" for="habit-name">습관 이름</label>
+    <input
+      id="habit-name"
+      type="text"
+      placeholder="예: 물 마시기"
+    >
+
+    <div id="days" class="days" aria-label="이번 주 체크"></div>
+
+    <p id="storage-message" role="status"></p>
+  </main>
+
+  <script>
+    const habitInput = document.getElementById("habit-name");
+    const daysContainer = document.getElementById("days");
+    const storageMessage = document.getElementById("storage-message");
+
+    const dayNames = ["월", "화", "수", "목", "금", "토", "일"];
+    const storagePrefix = "weekly-habit-";
+
+    // 저장이 차단된 경우에도 현재 페이지에서 사용할 임시 기록입니다.
+    const memoryRecords = {};
+    let storageAvailable = true;
+    let currentWeekKey = "";
+    let currentRecord = null;
+
+    // 날짜를 기기의 현지 날짜 기준 YYYY-MM-DD로 만듭니다.
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    // 이번 주 월요일을 구합니다. 일요일은 6일 전으로 이동합니다.
+    function getMonday() {
+      const today = new Date();
+      const monday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        12
+      );
+      const daysSinceMonday = (monday.getDay() + 6) % 7;
+      monday.setDate(monday.getDate() - daysSinceMonday);
+      return monday;
+    }
+
+    function emptyRecord() {
+      return {
+        habit: "",
+        checks: [false, false, false, false, false, false, false]
+      };
+    }
+
+    function showStorageWarning() {
+      storageAvailable = false;
+      storageMessage.textContent =
+        "저장할 수 없어요. 지금은 체크할 수 있지만 페이지를 닫거나 새로고침하면 기록이 사라질 수 있어요.";
+    }
+
+    // 해당 주의 기록을 불러옵니다.
+    function loadRecord(weekKey) {
+      if (memoryRecords[weekKey]) {
+        return memoryRecords[weekKey];
+      }
+
+      let savedText = null;
+
+      if (storageAvailable) {
+        try {
+          savedText = localStorage.getItem(storagePrefix + weekKey);
+        } catch (error) {
+          showStorageWarning();
+        }
+      }
+
+      let record = emptyRecord();
+
+      if (savedText) {
+        try {
+          const saved = JSON.parse(savedText);
+          if (typeof saved.habit === "string" && Array.isArray(saved.checks)) {
+            record = {
+              habit: saved.habit,
+              checks: dayNames.map(function (_, index) {
+                return saved.checks[index] === true;
+              })
+            };
+          }
+        } catch (error) {
+          // 읽을 수 없는 기존 데이터는 빈 기록으로 시작합니다.
+        }
+      }
+
+      memoryRecords[weekKey] = record;
+      return record;
+    }
+
+    // 변경할 때마다 해당 주의 기록을 저장합니다.
+    function saveRecord() {
+      memoryRecords[currentWeekKey] = currentRecord;
+
+      if (!storageAvailable) return;
+
+      try {
+        localStorage.setItem(
+          storagePrefix + currentWeekKey,
+          JSON.stringify(currentRecord)
+        );
+      } catch (error) {
+        showStorageWarning();
+      }
+    }
+
+    // 이번 주 날짜와 체크박스 7개를 화면에 만듭니다.
+    function renderWeek() {
+      const monday = getMonday();
+      const weekKey = formatDate(monday);
+
+      currentWeekKey = weekKey;
+      currentRecord = loadRecord(weekKey);
+      habitInput.value = currentRecord.habit;
+      daysContainer.textContent = "";
+
+      dayNames.forEach(function (dayName, index) {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + index);
+
+        const label = document.createElement("label");
+        label.className = "day";
+
+        const text = document.createElement("span");
+        text.className = "day-text";
+        text.textContent =
+          `${dayName} ${date.getMonth() + 1}/${date.getDate()}`;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = currentRecord.checks[index];
+        checkbox.setAttribute(
+          "aria-label",
+          `${date.getMonth() + 1}월 ${date.getDate()}일 ${dayName}요일 완료`
+        );
+
+        checkbox.addEventListener("change", function () {
+          currentRecord.checks[index] = checkbox.checked;
+          saveRecord();
+        });
+
+        label.append(text, checkbox);
+        daysContainer.appendChild(label);
+      });
+    }
+
+    // 습관 이름을 입력할 때마다 저장합니다.
+    habitInput.addEventListener("input", function () {
+      currentRecord.habit = habitInput.value;
+      saveRecord();
+    });
+
+    // 페이지를 계속 열어두거나 다시 돌아왔을 때 주가 바뀌었는지 확인합니다.
+    function checkWeek() {
+      if (formatDate(getMonday()) !== currentWeekKey) {
+        renderWeek();
+      }
+    }
+
+    renderWeek();
+    setInterval(checkWeek, 30000);
+    window.addEventListener("focus", checkWeek);
+  </script>
+</body>
+</html>
