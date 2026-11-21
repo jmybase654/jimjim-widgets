@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Habit Pet · 해빗이</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #ffffff;
+      font-family: 'Noto Sans KR', system-ui, sans-serif;
+      color: #2b2b33;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fffdf7;
+      border: 2px solid #efe6d6;
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .name {
+      font-family: 'Jua', sans-serif;
+      font-size: 26px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e6f4ec;
+      color: #1f5e3a;
+    }
+
+    .screen {
+      position: relative;
+      height: 240px;
+      border-radius: 22px;
+      background: #e6f4ec;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      padding: 7px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .pet svg { display: block; }
+    .pet svg[hidden] { display: none; }
+
+    .rate-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .rate-label { font-size: 13px; font-weight: 500; }
+
+    .rate-value {
+      font-family: 'Jua', sans-serif;
+      font-size: 22px;
+      color: #1f5e3a;
+    }
+
+    .bar {
+      height: 12px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: #eee8dc;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: #5fb283;
+      transition: width 0.3s ease;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #5e5e6b;
+    }
+
+    .inputs {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label { font-size: 13px; font-weight: 500; }
+
+    .field input {
+      height: 52px;
+      width: 100%;
+      border: 2px solid #e3d9c6;
+      border-radius: 14px;
+      background: #ffffff;
+      text-align: center;
+      font-family: 'Jua', sans-serif;
+      font-size: 26px;
+      color: #2b2b33;
+      -moz-appearance: textfield;
+    }
+
+    .field input::-webkit-outer-spin-button,
+    .field input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .field input:focus-visible {
+      outline: 3px solid #81b7e7;
+      outline-offset: 2px;
+    }
+
+    .slash {
+      font-family: 'Jua', sans-serif;
+      font-size: 28px;
+      color: #8a847a;
+      padding-bottom: 10px;
+    }
+
+    #note {
+      margin: 0;
+      min-height: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      color: #5e5e6b;
+    }
+
+    #note.warn { color: #a33228; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="header">
+      <span class="name">해빗이</span>
+      <span class="badge" id="badge">씨앗 단계</span>
+    </div>
+
+    <div class="screen">
+      <div class="bubble" id="bubble">오늘 할 일이 몇 개인지 알려 줘</div>
+      <div class="pet" id="pet">
+<svg width="180" height="180" data-stage="seed" hidden viewBox="0 0 160 160" role="img" aria-label="씨앗 단계 해빗이가 흙 위에서 꾸벅꾸벅 졸고 있어요">
+      <text x="108" y="112" font-family="sans-serif" font-size="16" font-weight="700" fill="#5B6B9A">z</text>
+      <text x="118" y="98" font-family="sans-serif" font-size="12" font-weight="700" fill="#5B6B9A">z</text>
+      <ellipse cx="80" cy="152" rx="44" ry="7" fill="#B9825A"/>
+      <path d="M80 118 Q81 110 85 106" stroke="#3DAE62" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="91" cy="105" rx="8" ry="4.5" transform="rotate(-25 91 105)" fill="#4CC174"/>
+      <ellipse cx="80" cy="136" rx="22" ry="18" fill="#D9934A"/>
+      <path d="M68 133 Q72 137 76 133" stroke="#1E1E1E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M84 133 Q88 137 92 133" stroke="#1E1E1E" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M76 142 Q80 145 84 142" stroke="#1E1E1E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+<svg width="180" height="180" data-stage="sprout" hidden viewBox="0 0 160 160" role="img" aria-label="새싹 단계 해빗이가 줄기를 쭉 뻗고 웃고 있어요">
+      <ellipse cx="80" cy="152" rx="44" ry="7" fill="#B9825A"/>
+      <path d="M80 152 L80 104" stroke="#3DAE62" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="66" cy="136" rx="14" ry="7.5" transform="rotate(20 66 136)" fill="#4CC174"/>
+      <ellipse cx="94" cy="136" rx="14" ry="7.5" transform="rotate(-20 94 136)" fill="#4CC174"/>
+      <path d="M68 104 Q80 114 92 104 Q86 99 80 104 Q74 99 68 104 Z" fill="#3DAE62"/>
+      <circle cx="80" cy="86" r="19" fill="#FFC93C"/>
+      <ellipse cx="73" cy="83" rx="2.8" ry="3.6" fill="#1E1E1E"/>
+      <ellipse cx="87" cy="83" rx="2.8" ry="3.6" fill="#1E1E1E"/>
+      <path d="M73 91 Q80 98 87 91" stroke="#1E1E1E" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+<svg width="180" height="180" data-stage="bud" hidden viewBox="0 0 160 160" role="img" aria-label="꽃봉오리 단계 해빗이 둘레에 꽃잎이 돋아나고 있어요">
+      <ellipse cx="80" cy="152" rx="44" ry="7" fill="#B9825A"/>
+      <path d="M80 152 L80 86" stroke="#3DAE62" stroke-width="6" stroke-linecap="round"/>
+      <ellipse cx="62" cy="132" rx="17" ry="9" transform="rotate(20 62 132)" fill="#4CC174"/>
+      <ellipse cx="98" cy="132" rx="17" ry="9" transform="rotate(-20 98 132)" fill="#4CC174"/>
+      <circle cx="80" cy="43" r="10" fill="#FF8FB3"/>
+      <circle cx="100" cy="51" r="10" fill="#FF8FB3"/>
+      <circle cx="108" cy="70" r="10" fill="#FF8FB3"/>
+      <circle cx="100" cy="89" r="10" fill="#FF8FB3"/>
+      <circle cx="80" cy="97" r="10" fill="#FF8FB3"/>
+      <circle cx="60" cy="89" r="10" fill="#FF8FB3"/>
+      <circle cx="52" cy="70" r="10" fill="#FF8FB3"/>
+      <circle cx="60" cy="51" r="10" fill="#FF8FB3"/>
+      <circle cx="80" cy="70" r="22" fill="#FFC93C"/>
+      <ellipse cx="72" cy="66" rx="3" ry="4" fill="#1E1E1E"/>
+      <ellipse cx="88" cy="66" rx="3" ry="4" fill="#1E1E1E"/>
+      <path d="M72 76 Q80 84 88 76" stroke="#1E1E1E" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    </svg>
+<svg width="180" height="180" data-stage="flower" hidden viewBox="0 0 160 160" role="img" aria-label="활짝 꽃 단계 해빗이가 커다란 꽃잎을 펼치고 활짝 웃고 있어요">
+      <path d="M16 30 l3 7.5 7.5 3 -7.5 3 -3 7.5 -3 -7.5 -7.5 -3 7.5 -3 z" fill="#FF9F1C"/>
+      <path d="M144 20 l2.4 6 6 2.4 -6 2.4 -2.4 6 -2.4 -6 -6 -2.4 6 -2.4 z" fill="#5B8DEF"/>
+      <circle cx="140" cy="96" r="3.5" fill="#FF9F1C"/>
+      <circle cx="20" cy="100" r="3" fill="#5B8DEF"/>
+      <ellipse cx="80" cy="152" rx="44" ry="7" fill="#B9825A"/>
+      <path d="M80 152 L80 84" stroke="#3DAE62" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="58" cy="130" rx="21" ry="11" transform="rotate(18 58 130)" fill="#4CC174"/>
+      <ellipse cx="102" cy="130" rx="21" ry="11" transform="rotate(-18 102 130)" fill="#4CC174"/>
+      <circle cx="80" cy="23" r="16" fill="#FF8FB3"/>
+      <circle cx="105.5" cy="33.5" r="16" fill="#FF8FB3"/>
+      <circle cx="116" cy="59" r="16" fill="#FF8FB3"/>
+      <circle cx="105.5" cy="84.5" r="16" fill="#FF8FB3"/>
+      <circle cx="80" cy="95" r="16" fill="#FF8FB3"/>
+      <circle cx="54.5" cy="84.5" r="16" fill="#FF8FB3"/>
+      <circle cx="44" cy="59" r="16" fill="#FF8FB3"/>
+      <circle cx="54.5" cy="33.5" r="16" fill="#FF8FB3"/>
+      <circle cx="80" cy="59" r="27" fill="#FFC93C"/>
+      <path d="M67 56 Q71.5 50 76 56" stroke="#1E1E1E" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+      <path d="M84 56 Q88.5 50 93 56" stroke="#1E1E1E" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+      <path d="M70 65 Q80 78 90 65 Z" fill="#1E1E1E"/>
+    </svg>
+      </div>
+    </div>
+
+    <div>
+      <div class="rate-row">
+        <span class="rate-label">오늘 달성률</span>
+        <span class="rate-value" id="percent">0%</span>
+      </div>
+      <div class="bar"><div class="bar-fill" id="bar"></div></div>
+      <div class="steps"><span>씨앗</span><span>새싹</span><span>꽃봉오리</span><span>활짝 꽃</span></div>
+    </div>
+
+    <div class="inputs">
+      <div class="field">
+        <label for="done">완료한 일</label>
+        <input id="done" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+      </div>
+      <span class="slash" aria-hidden="true">/</span>
+      <div class="field">
+        <label for="total">오늘 할 일</label>
+        <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+      </div>
+    </div>
+
+    <p id="note" role="status">노션에서 체크한 개수를 그대로 적어 주세요</p>
+  </main>
+
+  <script>
+    const doneInput = document.getElementById('done');
+    const totalInput = document.getElementById('total');
+    const badge = document.getElementById('badge');
+    const bubble = document.getElementById('bubble');
+    const percentText = document.getElementById('percent');
+    const bar = document.getElementById('bar');
+    const note = document.getElementById('note');
+    const pets = document.querySelectorAll('#pet svg');
+
+    // 날짜별로 기록해서, 새로운 날에는 처음부터 시작해요.
+    function todayKey() {
+      const d = new Date();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return 'habit-pet-' + d.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(todayKey(), JSON.stringify({ done: doneInput.value, total: totalInput.value }));
+      } catch (e) {
+        // 저장이 막힌 환경에서도 화면은 그대로 작동해요.
+      }
+    }
+
+    function load() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(todayKey()) || 'null');
+        if (saved) {
+          doneInput.value = saved.done ?? '';
+          totalInput.value = saved.total ?? '';
+        }
+      } catch (e) {}
+    }
+
+    function showStage(stage) {
+      pets.forEach(function (svg) {
+        svg.hidden = svg.dataset.stage !== stage;
+      });
+    }
+
+    function update() {
+      const doneRaw = doneInput.value;
+      const totalRaw = totalInput.value;
+      const done = Number(doneRaw);
+      const total = Number(totalRaw);
+
+      const validTotal = totalRaw !== '' && Number.isInteger(total) && total > 0;
+      const validDone = doneRaw === '' || (Number.isInteger(done) && done >= 0);
+
+      let ratio = 0;
+      note.className = '';
+      note.textContent = '노션에서 체크한 개수를 그대로 적어 주세요';
+
+      if (!validTotal || !validDone) {
+        note.className = 'warn';
+        note.textContent = !validTotal
+          ? '오늘 할 일 개수를 1 이상으로 적어 주세요'
+          : '완료한 일은 0 이상의 정수로 적어 주세요';
+      } else if (done > total) {
+        ratio = 1;
+        note.className = 'warn';
+        note.textContent = '완료한 일이 오늘 할 일보다 많아요';
+      } else {
+        ratio = (doneRaw === '' ? 0 : done) / total;
+      }
+
+      let stage = 'seed';
+      let stageName = '씨앗';
+      let msg = '오늘 할 일, 하나만 같이 해 볼까?';
+
+      if (!validTotal) {
+        msg = '오늘 할 일이 몇 개인지 알려 줘';
+      } else if (ratio >= 1) {
+        stage = 'flower'; stageName = '활짝 꽃'; msg = '오늘 할 일 다 끝! 최고야';
+      } else if (ratio >= 0.5) {
+        stage = 'bud'; stageName = '꽃봉오리'; msg = '거의 다 왔어, 조금만 더!';
+      } else if (ratio > 0) {
+        stage = 'sprout'; stageName = '새싹'; msg = '쑥쑥 자라는 중이야';
+      }
+
+      const percent = Math.round(ratio * 100);
+      percentText.textContent = percent + '%';
+      bar.style.width = percent + '%';
+      badge.textContent = stageName + ' 단계';
+      bubble.textContent = msg;
+      showStage(stage);
+    }
+
+    doneInput.addEventListener('input', function () { update(); save(); });
+    totalInput.addEventListener('input', function () { update(); save(); });
+
+    load();
+    update();
+  </script>
+</body>
+</html>
