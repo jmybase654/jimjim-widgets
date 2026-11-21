@@ -312,7 +312,8 @@
 
     function showStage(stage) {
       pets.forEach(function (svg) {
-        svg.hidden = svg.dataset.stage !== stage;
+        // SVG에는 hidden 속성을 직접 붙였다 떼야 해요.
+        svg.toggleAttribute('hidden', svg.getAttribute('data-stage') !== stage);
       });
     }
 
