@@ -46,10 +46,11 @@
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 999px;
-      background: #e6f4ec;
-      color: #1f5e3a;
+      background: #ffe3ec;
+      color: #9c2a55;
     }
 
+    /* 해빗이가 있는 화면 */
     .screen {
       position: relative;
       height: 240px;
@@ -73,94 +74,119 @@
       font-size: 13px;
       font-weight: 500;
       white-space: nowrap;
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
     }
 
     .pet svg { display: block; }
     .pet svg[hidden] { display: none; }
 
-    .rate-row {
+    /* 달성률 링: 해빗이 화면과 간격을 넉넉히 둡니다. */
+    .ring-wrap {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      justify-content: center;
+      margin-top: 14px;
     }
 
-    .rate-label { font-size: 13px; font-weight: 500; }
-
-    .rate-value {
-      font-family: 'Jua', sans-serif;
-      font-size: 22px;
-      color: #1f5e3a;
-    }
-
-    .bar {
-      height: 12px;
-      margin-top: 6px;
-      border-radius: 999px;
-      background: #eee8dc;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      width: 0;
-      border-radius: 999px;
-      background: #5fb283;
-      transition: width 0.3s ease;
-    }
-
-    .steps {
+    .ring {
+      width: 168px;
+      height: 168px;
+      border-radius: 50%;
+      background: conic-gradient(#d93a75 0deg, #f3e6ea 0deg);
       display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-size: 11px;
-      color: #5e5e6b;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
     }
 
-    .inputs {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-    }
-
-    .field {
-      flex: 1;
+    .ring-inner {
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      background: #fffdf7;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      justify-content: center;
     }
 
-    .field label { font-size: 13px; font-weight: 500; }
+    .fraction {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+    }
 
-    .field input {
-      height: 52px;
-      width: 100%;
-      border: 2px solid #e3d9c6;
-      border-radius: 14px;
-      background: #ffffff;
-      text-align: center;
+    .fraction input {
+      border: 0;
+      background: transparent;
       font-family: 'Jua', sans-serif;
-      font-size: 26px;
-      color: #2b2b33;
+      padding: 0;
       -moz-appearance: textfield;
     }
 
-    .field input::-webkit-outer-spin-button,
-    .field input::-webkit-inner-spin-button {
+    .fraction input::-webkit-outer-spin-button,
+    .fraction input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
-    .field input:focus-visible {
-      outline: 3px solid #81b7e7;
-      outline-offset: 2px;
+    #done {
+      width: 50px;
+      text-align: right;
+      font-size: 38px;
+      color: #2b2b33;
+    }
+
+    #total {
+      width: 40px;
+      text-align: left;
+      font-size: 24px;
+      color: #8a847a;
     }
 
     .slash {
       font-family: 'Jua', sans-serif;
-      font-size: 28px;
-      color: #8a847a;
-      padding-bottom: 10px;
+      font-size: 22px;
+      color: #b8b0a2;
+    }
+
+    .ring-labels {
+      display: flex;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #5e5e6b;
+    }
+
+    #percent {
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #b0245a;
+    }
+
+    #complete {
+      height: 54px;
+      border: 0;
+      border-radius: 999px;
+      background: #d93a75;
+      color: #ffffff;
+      font-family: 'Jua', sans-serif;
+      font-size: 19px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    #complete:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    input:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #81b7e7;
+      outline-offset: 2px;
     }
 
     #note {
@@ -250,37 +276,33 @@
       </div>
     </div>
 
-    <div>
-      <div class="rate-row">
-        <span class="rate-label">오늘 달성률</span>
-        <span class="rate-value" id="percent">0%</span>
-      </div>
-      <div class="bar"><div class="bar-fill" id="bar"></div></div>
-      <div class="steps"><span>씨앗</span><span>새싹</span><span>꽃봉오리</span><span>활짝 꽃</span></div>
-    </div>
-
-    <div class="inputs">
-      <div class="field">
-        <label for="done">완료한 일</label>
-        <input id="done" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
-      </div>
-      <span class="slash" aria-hidden="true">/</span>
-      <div class="field">
-        <label for="total">오늘 할 일</label>
-        <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+    <div class="ring-wrap">
+      <div class="ring" id="ring">
+        <div class="ring-inner">
+          <div class="fraction">
+            <input id="done" type="number" min="0" step="1" inputmode="numeric" placeholder="0" aria-label="완료한 일">
+            <span class="slash" aria-hidden="true">/</span>
+            <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="0" aria-label="오늘 할 일">
+          </div>
+          <div class="ring-labels"><label for="done">완료</label><label for="total">할 일</label></div>
+          <span id="percent">0%</span>
+        </div>
       </div>
     </div>
 
-    <p id="note" role="status">노션에서 체크한 개수를 그대로 적어 주세요</p>
+    <button id="complete" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>할 일 하나 완료!</button>
+
+    <p id="note" role="status">할 일을 끝낼 때마다 눌러 주세요</p>
   </main>
 
   <script>
     const doneInput = document.getElementById('done');
     const totalInput = document.getElementById('total');
+    const completeButton = document.getElementById('complete');
     const badge = document.getElementById('badge');
     const bubble = document.getElementById('bubble');
+    const ring = document.getElementById('ring');
     const percentText = document.getElementById('percent');
-    const bar = document.getElementById('bar');
     const note = document.getElementById('note');
     const pets = document.querySelectorAll('#pet svg');
 
@@ -310,44 +332,52 @@
       } catch (e) {}
     }
 
+    // 지금 단계의 해빗이만 보여 줘요.
     function showStage(stage) {
       pets.forEach(function (svg) {
-        // SVG에는 hidden 속성을 직접 붙였다 떼야 해요.
         svg.toggleAttribute('hidden', svg.getAttribute('data-stage') !== stage);
       });
     }
 
-    function update() {
+    function readNumbers() {
       const doneRaw = doneInput.value;
       const totalRaw = totalInput.value;
-      const done = Number(doneRaw);
+      const done = doneRaw === '' ? 0 : Number(doneRaw);
       const total = Number(totalRaw);
+      return {
+        done: done,
+        total: total,
+        totalOk: totalRaw !== '' && Number.isInteger(total) && total > 0,
+        doneOk: Number.isInteger(done) && done >= 0
+      };
+    }
 
-      const validTotal = totalRaw !== '' && Number.isInteger(total) && total > 0;
-      const validDone = doneRaw === '' || (Number.isInteger(done) && done >= 0);
-
+    function update() {
+      const n = readNumbers();
       let ratio = 0;
       note.className = '';
-      note.textContent = '노션에서 체크한 개수를 그대로 적어 주세요';
+      note.textContent = '할 일을 끝낼 때마다 눌러 주세요';
 
-      if (!validTotal || !validDone) {
+      if (!n.totalOk) {
         note.className = 'warn';
-        note.textContent = !validTotal
-          ? '오늘 할 일 개수를 1 이상으로 적어 주세요'
-          : '완료한 일은 0 이상의 정수로 적어 주세요';
-      } else if (done > total) {
+        note.textContent = '오늘 할 일 개수를 먼저 적어 주세요';
+      } else if (!n.doneOk) {
+        note.className = 'warn';
+        note.textContent = '완료한 일은 0 이상의 정수로 적어 주세요';
+      } else if (n.done > n.total) {
         ratio = 1;
         note.className = 'warn';
         note.textContent = '완료한 일이 오늘 할 일보다 많아요';
       } else {
-        ratio = (doneRaw === '' ? 0 : done) / total;
+        ratio = n.done / n.total;
+        if (n.done === n.total) note.textContent = '오늘 할 일을 모두 완료했어요!';
       }
 
       let stage = 'seed';
       let stageName = '씨앗';
       let msg = '오늘 할 일, 하나만 같이 해 볼까?';
 
-      if (!validTotal) {
+      if (!n.totalOk) {
         msg = '오늘 할 일이 몇 개인지 알려 줘';
       } else if (ratio >= 1) {
         stage = 'flower'; stageName = '활짝 꽃'; msg = '오늘 할 일 다 끝! 최고야';
@@ -359,11 +389,22 @@
 
       const percent = Math.round(ratio * 100);
       percentText.textContent = percent + '%';
-      bar.style.width = percent + '%';
+      ring.style.background = 'conic-gradient(#d93a75 ' + (percent * 3.6) + 'deg, #f3e6ea 0deg)';
       badge.textContent = stageName + ' 단계';
       bubble.textContent = msg;
+      completeButton.disabled = !(n.totalOk && n.doneOk && n.done < n.total);
       showStage(stage);
     }
+
+    // 완료 버튼: 완료한 일을 1 올려요.
+    completeButton.addEventListener('click', function () {
+      const n = readNumbers();
+      if (n.totalOk && n.doneOk && n.done < n.total) {
+        doneInput.value = String(n.done + 1);
+        update();
+        save();
+      }
+    });
 
     doneInput.addEventListener('input', function () { update(); save(); });
     totalInput.addEventListener('input', function () { update(); save(); });
