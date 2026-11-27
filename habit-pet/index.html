@@ -163,11 +163,46 @@
       margin: 0;
     }
 
-    #done { width: 46px; text-align: right; font-size: 36px; color: #2b2b33; }
-    #total { width: 36px; text-align: left; font-size: 22px; color: #6b6458; }
-    .slash { font-family: 'Jua', sans-serif; font-size: 20px; color: #c9bfb0; padding: 0 2px; }
+    /* 숫자 칸: 눌러서 적을 수 있는 칸처럼 보이게 해요. */
+    .fraction { align-items: center; gap: 6px; }
 
-    .ring-labels { display: flex; gap: 12px; font-size: 11px; font-weight: 500; color: #6b6458; }
+    .field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .fraction input {
+      height: 42px;
+      border-radius: 12px;
+      background: #f6e9ee;
+      border: 2px solid transparent;
+      text-align: center;
+      color: #2b2b33;
+    }
+
+    #done { width: 46px; font-size: 26px; }
+    #total { width: 46px; font-size: 26px; }
+
+    #total::placeholder { color: #e0457f; opacity: 1; }
+
+    /* 오늘 할 일이 비어 있으면 분홍 점선과 반짝임으로 알려 줘요. */
+    #total.need {
+      background: #ffffff;
+      border: 2px dashed #e0457f;
+      animation: glow 1.6s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(224, 69, 127, 0.35); }
+      50% { box-shadow: 0 0 0 6px rgba(224, 69, 127, 0); }
+    }
+
+    .slash { font-family: 'Jua', sans-serif; font-size: 20px; color: #c9bfb0; margin-bottom: 18px; }
+
+    .field label { font-size: 11px; font-weight: 500; color: #6b6458; }
+    .field label.need { font-weight: 700; color: #b0245a; }
 
     .side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
     .rate-label { display: block; font-size: 12px; font-weight: 500; color: #6b6458; }
@@ -207,6 +242,7 @@
     }
 
     #note.warn { color: #a33228; }
+    #note.hint { color: #b0245a; font-weight: 700; }
 
     /* 지난 7일 정원 */
     .garden {
@@ -298,7 +334,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .bounce, .press, .pop, .spark, .petal { animation: none; }
+      .bounce, .press, .pop, .spark, .petal, #total.need { animation: none; }
       .ring { transition: none; }
     }
   </style>
@@ -394,11 +430,16 @@
       <div class="ring" id="ring">
         <div class="ring-inner">
           <div class="fraction">
-            <input id="done" type="number" min="0" step="1" inputmode="numeric" placeholder="0" aria-label="완료한 일">
+            <div class="field">
+              <input id="done" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+              <label for="done">완료</label>
+            </div>
             <span class="slash" aria-hidden="true">/</span>
-            <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="0" aria-label="오늘 할 일">
+            <div class="field">
+              <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="?">
+              <label for="total" id="total-label">할 일</label>
+            </div>
           </div>
-          <div class="ring-labels"><label for="done">완료</label><label for="total">할 일</label></div>
         </div>
       </div>
 
@@ -612,9 +653,15 @@
       // 안내 문구
       note.className = '';
       note.textContent = '할 일을 끝낼 때마다 눌러 주세요';
-      if (!c.totalOk) {
+      const needTotal = totalInput.value === '';
+      totalInput.classList.toggle('need', !c.totalOk);
+      document.getElementById('total-label').classList.toggle('need', !c.totalOk);
+      if (needTotal) {
+        note.className = 'hint';
+        note.textContent = '링 안의 분홍 칸(?)에 오늘 할 일 개수를 적어 주세요';
+      } else if (!c.totalOk) {
         note.className = 'warn';
-        note.textContent = '오늘 할 일 개수를 먼저 적어 주세요';
+        note.textContent = '오늘 할 일 개수는 1 이상으로 적어 주세요';
       } else if (!c.doneOk) {
         note.className = 'warn';
         note.textContent = '완료한 일은 0 이상의 정수로 적어 주세요';
@@ -627,7 +674,7 @@
 
       // 말풍선
       if (!c.totalOk) {
-        bubbleText.textContent = '오늘 할 일이 몇 개인지 알려 줘';
+        bubbleText.textContent = '오늘 할 일이 몇 개야? 분홍 칸에 적어 줘!';
       } else if (grew) {
         bubbleText.textContent = '자랐다! ' + STAGE_NAMES[c.stage] + ' 단계가 됐어';
         clearTimeout(grewTimer);
