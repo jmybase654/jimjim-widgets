@@ -11,7 +11,7 @@
 
     body {
       margin: 0;
-      padding: 12px;
+      padding: 16px 12px 24px;
       background: #ffffff;
       font-family: 'Noto Sans KR', system-ui, sans-serif;
       color: #2b2b33;
@@ -21,98 +21,133 @@
       width: 100%;
       max-width: 380px;
       margin: 0 auto;
-      padding: 20px;
-      background: #fffdf7;
-      border: 2px solid #efe6d6;
-      border-radius: 28px;
+      padding: 22px 20px 20px;
+      background: #fffcf6;
+      border-radius: 32px;
+      box-shadow: 0 1px 0 #efe6d6, 0 10px 30px rgba(120, 90, 60, 0.10);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
+    /* 머리글 */
     .header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      padding: 0 4px;
     }
 
-    .name {
-      font-family: 'Jua', sans-serif;
-      font-size: 26px;
-    }
+    .date { display: block; font-size: 12px; font-weight: 500; color: #6b6458; }
+    .name { display: block; font-family: 'Jua', sans-serif; font-size: 28px; line-height: 1; margin-top: 2px; }
 
     .badge {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
+      font-family: 'Jua', sans-serif;
+      font-size: 14px;
+      padding: 6px 12px;
       border-radius: 999px;
       background: #ffe3ec;
       color: #9c2a55;
     }
 
-    /* 해빗이가 있는 화면 */
+    /* 해빗이 화면 */
     .screen {
       position: relative;
-      height: 240px;
-      border-radius: 22px;
-      background: #e6f4ec;
+      height: 236px;
+      border-radius: 26px;
+      background: #e4f3ea;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding-bottom: 6px;
       overflow: hidden;
     }
 
+    .deco { position: absolute; background: #ffffff; opacity: 0.8; }
+    .cloud1 { left: 26px; top: 64px; width: 44px; height: 16px; border-radius: 999px; }
+    .cloud2 { left: 44px; top: 56px; width: 22px; height: 22px; border-radius: 50%; }
+    .cloud3 { right: 30px; top: 92px; width: 34px; height: 12px; border-radius: 999px; }
+    .hill { position: absolute; left: -30px; right: -30px; bottom: -70px; height: 110px; border-radius: 50%; background: #cdead6; }
+
     .bubble {
       position: absolute;
-      top: 12px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bubble-text {
       background: #ffffff;
-      padding: 7px 14px;
-      border-radius: 16px;
+      padding: 8px 16px;
+      border-radius: 18px;
       font-size: 13px;
       font-weight: 500;
       white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(60, 110, 80, 0.10);
+    }
+
+    .bubble-tail {
+      width: 12px;
+      height: 12px;
+      margin-top: -7px;
+      background: #ffffff;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .pet {
+      position: relative;
+      z-index: 2;
+      margin-bottom: 4px;
+      transform-origin: 50% 100%;
     }
 
     .pet svg { display: block; }
     .pet svg[hidden] { display: none; }
 
-    /* 달성률 링: 해빗이 화면과 간격을 넉넉히 둡니다. */
-    .ring-wrap {
+    /* 링 + 버튼 */
+    .progress {
       display: flex;
-      justify-content: center;
-      margin-top: 14px;
+      align-items: center;
+      gap: 18px;
+      padding: 6px 4px 0;
+    }
+
+    @property --p {
+      syntax: '<number>';
+      inherits: false;
+      initial-value: 0;
     }
 
     .ring {
-      width: 168px;
-      height: 168px;
+      --p: 0;
+      flex: 0 0 148px;
+      width: 148px;
+      height: 148px;
       border-radius: 50%;
-      background: conic-gradient(#d93a75 0deg, #f3e6ea 0deg);
+      background: conic-gradient(#e0457f calc(var(--p) * 3.6deg), #f6e9ee 0deg);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s ease;
+      transition: --p 0.6s ease;
     }
 
     .ring-inner {
-      width: 136px;
-      height: 136px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: #fffdf7;
+      background: #fffcf6;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-
-    .fraction {
-      display: flex;
-      align-items: baseline;
       gap: 2px;
     }
+
+    .fraction { display: flex; align-items: baseline; }
 
     .fraction input {
       border: 0;
@@ -128,60 +163,33 @@
       margin: 0;
     }
 
-    #done {
-      width: 50px;
-      text-align: right;
-      font-size: 38px;
-      color: #2b2b33;
-    }
+    #done { width: 46px; text-align: right; font-size: 36px; color: #2b2b33; }
+    #total { width: 36px; text-align: left; font-size: 22px; color: #6b6458; }
+    .slash { font-family: 'Jua', sans-serif; font-size: 20px; color: #c9bfb0; padding: 0 2px; }
 
-    #total {
-      width: 40px;
-      text-align: left;
-      font-size: 24px;
-      color: #8a847a;
-    }
+    .ring-labels { display: flex; gap: 12px; font-size: 11px; font-weight: 500; color: #6b6458; }
 
-    .slash {
-      font-family: 'Jua', sans-serif;
-      font-size: 22px;
-      color: #b8b0a2;
-    }
-
-    .ring-labels {
-      display: flex;
-      gap: 10px;
-      font-size: 11px;
-      font-weight: 500;
-      color: #5e5e6b;
-    }
-
-    #percent {
-      margin-top: 2px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #b0245a;
-    }
+    .side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    .rate-label { display: block; font-size: 12px; font-weight: 500; color: #6b6458; }
+    #percent { display: block; font-family: 'Jua', sans-serif; font-size: 34px; line-height: 1.1; color: #b0245a; }
 
     #complete {
-      height: 54px;
+      height: 52px;
       border: 0;
-      border-radius: 999px;
-      background: #d93a75;
+      border-radius: 18px;
+      background: #e0457f;
+      box-shadow: 0 4px 0 #a8285a;
       color: #ffffff;
       font-family: 'Jua', sans-serif;
-      font-size: 19px;
+      font-size: 17px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    #complete:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    #complete:disabled { opacity: 0.4; cursor: not-allowed; }
 
     input:focus-visible,
     button:focus-visible {
@@ -199,17 +207,123 @@
     }
 
     #note.warn { color: #a33228; }
+
+    /* 지난 7일 정원 */
+    .garden {
+      background: #f7f1e7;
+      border-radius: 24px;
+      padding: 14px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .garden-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0 4px;
+    }
+
+    .garden-title { font-family: 'Jua', sans-serif; font-size: 17px; }
+    .garden-count { font-size: 12px; font-weight: 500; color: #6b6458; }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 2px;
+      align-items: end;
+    }
+
+    .day { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .day-pet { width: 44px; height: 46px; display: flex; align-items: flex-end; justify-content: center; }
+    .day-pet svg { display: block; }
+    .soil { width: 26px; height: 7px; margin-bottom: 3px; border-radius: 50%; background: #e2d5c4; }
+
+    .day-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #6b6458;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+
+    .day.today .day-label { font-weight: 700; color: #ffffff; background: #e0457f; }
+
+    /* 움직임 */
+    @keyframes bounce {
+      0% { transform: translateY(0) scale(1, 1); }
+      30% { transform: translateY(-18px) scale(0.96, 1.05); }
+      55% { transform: translateY(0) scale(1.06, 0.94); }
+      75% { transform: translateY(-5px) scale(1, 1); }
+      100% { transform: translateY(0) scale(1, 1); }
+    }
+    .bounce { animation: bounce 0.6s ease; }
+
+    @keyframes press {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    .press { animation: press 0.25s ease; }
+
+    @keyframes pop {
+      0% { transform: translateX(-50%) scale(0.85); }
+      60% { transform: translateX(-50%) scale(1.06); }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+    .pop { animation: pop 0.35s ease; }
+
+    @keyframes spark {
+      0% { transform: scale(0) rotate(0); opacity: 0; }
+      40% { transform: scale(1.3) rotate(20deg); opacity: 1; }
+      100% { transform: scale(0.8) rotate(45deg); opacity: 0; }
+    }
+    .spark { position: absolute; z-index: 1; opacity: 0; animation: spark 1.4s ease forwards; }
+
+    @keyframes fall {
+      0% { transform: translateY(-30px) rotate(0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(250px) rotate(320deg); opacity: 0; }
+    }
+    .petal {
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 12px;
+      height: 16px;
+      border-radius: 60% 60% 60% 0;
+      opacity: 0;
+      animation: fall 2.4s ease-in forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bounce, .press, .pop, .spark, .petal { animation: none; }
+      .ring { transition: none; }
+    }
   </style>
 </head>
 <body>
   <main class="card">
     <div class="header">
-      <span class="name">해빗이</span>
-      <span class="badge" id="badge">씨앗 단계</span>
+      <div>
+        <span class="date" id="date"></span>
+        <span class="name">해빗이</span>
+      </div>
+      <span class="badge" id="badge">씨앗</span>
     </div>
 
-    <div class="screen">
-      <div class="bubble" id="bubble">오늘 할 일이 몇 개인지 알려 줘</div>
+    <div class="screen" id="screen">
+      <span class="deco cloud1" aria-hidden="true"></span>
+      <span class="deco cloud2" aria-hidden="true"></span>
+      <span class="deco cloud3" aria-hidden="true"></span>
+      <span class="hill" aria-hidden="true"></span>
+
+      <div class="bubble" id="bubble">
+        <span class="bubble-text" id="bubble-text">오늘 할 일이 몇 개인지 알려 줘</span>
+        <span class="bubble-tail" aria-hidden="true"></span>
+      </div>
+
       <div class="pet" id="pet">
 <svg width="180" height="180" data-stage="seed" hidden viewBox="0 0 160 160" role="img" aria-label="씨앗 단계 해빗이가 흙 위에서 꾸벅꾸벅 졸고 있어요">
       <text x="108" y="112" font-family="sans-serif" font-size="16" font-weight="700" fill="#5B6B9A">z</text>
@@ -276,7 +390,7 @@
       </div>
     </div>
 
-    <div class="ring-wrap">
+    <div class="progress">
       <div class="ring" id="ring">
         <div class="ring-inner">
           <div class="fraction">
@@ -285,14 +399,30 @@
             <input id="total" type="number" min="0" step="1" inputmode="numeric" placeholder="0" aria-label="오늘 할 일">
           </div>
           <div class="ring-labels"><label for="done">완료</label><label for="total">할 일</label></div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div>
+          <span class="rate-label">오늘 달성률</span>
           <span id="percent">0%</span>
         </div>
+        <button id="complete" type="button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          하나 완료!
+        </button>
       </div>
     </div>
 
-    <button id="complete" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>할 일 하나 완료!</button>
-
     <p id="note" role="status">할 일을 끝낼 때마다 눌러 주세요</p>
+
+    <section class="garden" aria-labelledby="garden-title">
+      <div class="garden-head">
+        <span class="garden-title" id="garden-title">지난 7일 정원</span>
+        <span class="garden-count" id="garden-count">활짝 핀 날 0일</span>
+      </div>
+      <div class="days" id="days"></div>
+    </section>
   </main>
 
   <script>
@@ -301,116 +431,260 @@
     const completeButton = document.getElementById('complete');
     const badge = document.getElementById('badge');
     const bubble = document.getElementById('bubble');
+    const bubbleText = document.getElementById('bubble-text');
     const ring = document.getElementById('ring');
     const percentText = document.getElementById('percent');
     const note = document.getElementById('note');
-    const pets = document.querySelectorAll('#pet svg');
+    const screen = document.getElementById('screen');
+    const petBox = document.getElementById('pet');
+    const pets = petBox.querySelectorAll('svg');
+    const daysBox = document.getElementById('days');
+    const gardenCount = document.getElementById('garden-count');
 
-    // 날짜별로 기록해서, 새로운 날에는 처음부터 시작해요.
-    function todayKey() {
-      const d = new Date();
+    const STAGE_NAMES = { seed: '씨앗', sprout: '새싹', bud: '꽃봉오리', flower: '활짝 꽃' };
+    const STAGE_RANK = { seed: 0, sprout: 1, bud: 2, flower: 3 };
+    const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
+    const LINES = {
+      seed: ['오늘 할 일, 하나만 같이 해 볼까?', '음냐… 첫 번째 할 일로 깨워 줘', '씨앗은 준비됐어! 시작해 볼까?'],
+      sprout: ['쑥쑥 자라는 중이야', '좋아, 그 기세 그대로!', '새싹이 고개를 들었어', '하나씩 하면 돼, 잘하고 있어'],
+      bud: ['거의 다 왔어, 조금만 더!', '꽃봉오리가 몽글몽글해졌어', '반 넘게 해냈어, 대단해!', '곧 꽃이 필 것 같아'],
+      flower: ['오늘 할 일 다 끝! 최고야', '활짝 폈다! 오늘 정말 멋졌어', '오늘의 나, 칭찬해!']
+    };
+
+    let currentStage = 'seed';
+    let grewTimer = null;
+
+    // ---------- 저장 (날짜별) ----------
+    function dateKey(d) {
       const mm = String(d.getMonth() + 1).padStart(2, '0');
       const dd = String(d.getDate()).padStart(2, '0');
       return 'habit-pet-' + d.getFullYear() + '-' + mm + '-' + dd;
     }
 
+    function readRecord(d) {
+      try {
+        return JSON.parse(localStorage.getItem(dateKey(d)) || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+
     function save() {
       try {
-        localStorage.setItem(todayKey(), JSON.stringify({ done: doneInput.value, total: totalInput.value }));
+        localStorage.setItem(dateKey(new Date()), JSON.stringify({ done: doneInput.value, total: totalInput.value }));
       } catch (e) {
         // 저장이 막힌 환경에서도 화면은 그대로 작동해요.
       }
     }
 
-    function load() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(todayKey()) || 'null');
-        if (saved) {
-          doneInput.value = saved.done ?? '';
-          totalInput.value = saved.total ?? '';
-        }
-      } catch (e) {}
+    // ---------- 계산 ----------
+    function calc(doneRaw, totalRaw) {
+      const done = doneRaw === '' || doneRaw == null ? 0 : Number(doneRaw);
+      const total = Number(totalRaw);
+      const totalOk = totalRaw !== '' && totalRaw != null && Number.isInteger(total) && total > 0;
+      const doneOk = Number.isInteger(done) && done >= 0;
+      let ratio = 0;
+      if (totalOk && doneOk) ratio = Math.min(1, done / total);
+      let stage = 'seed';
+      if (totalOk && doneOk) {
+        if (ratio >= 1) stage = 'flower';
+        else if (ratio >= 0.5) stage = 'bud';
+        else if (ratio > 0) stage = 'sprout';
+      }
+      return { done: done, total: total, totalOk: totalOk, doneOk: doneOk, ratio: ratio, stage: stage };
     }
 
-    // 지금 단계의 해빗이만 보여 줘요.
+    function pick(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    // ---------- 움직임 ----------
+    function replay(el, className) {
+      el.classList.remove(className);
+      void el.offsetWidth; // 애니메이션을 처음부터 다시 시작하게 해요.
+      el.classList.add(className);
+    }
+
+    function sparkle() {
+      const colors = ['#FF9F1C', '#5B8DEF', '#F0508A', '#FFC93C', '#4CC174', '#9C82E0'];
+      const spots = [['18%', '30%'], ['74%', '24%'], ['10%', '62%'], ['82%', '58%'], ['30%', '14%'], ['62%', '10%']];
+      spots.forEach(function (spot, i) {
+        const size = i % 2 ? 18 : 26;
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'spark');
+        svg.setAttribute('width', size);
+        svg.setAttribute('height', size);
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.style.left = spot[0];
+        svg.style.top = spot[1];
+        svg.style.animationDelay = (i * 0.08) + 's';
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z');
+        path.setAttribute('fill', colors[i]);
+        svg.appendChild(path);
+        screen.appendChild(svg);
+        setTimeout(function () { svg.remove(); }, 1800);
+      });
+    }
+
+    function petalShower() {
+      const colors = ['#FF8FB3', '#F0508A', '#FFC93C', '#FFB3C4'];
+      for (let i = 0; i < 14; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        petal.setAttribute('aria-hidden', 'true');
+        petal.style.left = (4 + i * 6.8) + '%';
+        petal.style.background = colors[i % colors.length];
+        petal.style.animationDelay = (((i * 37) % 9) * 0.12) + 's';
+        screen.appendChild(petal);
+        setTimeout(function () { petal.remove(); }, 3600);
+      }
+    }
+
+    // ---------- 화면 그리기 ----------
     function showStage(stage) {
       pets.forEach(function (svg) {
         svg.toggleAttribute('hidden', svg.getAttribute('data-stage') !== stage);
       });
     }
 
-    function readNumbers() {
-      const doneRaw = doneInput.value;
-      const totalRaw = totalInput.value;
-      const done = doneRaw === '' ? 0 : Number(doneRaw);
-      const total = Number(totalRaw);
-      return {
-        done: done,
-        total: total,
-        totalOk: totalRaw !== '' && Number.isInteger(total) && total > 0,
-        doneOk: Number.isInteger(done) && done >= 0
-      };
+    function renderGarden(todayStage, todayOk) {
+      daysBox.textContent = '';
+      const today = new Date();
+      let fullDays = 0;
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+        const isToday = i === 0;
+        let stage = null;
+
+        if (isToday) {
+          stage = todayOk ? todayStage : null;
+        } else {
+          const rec = readRecord(d);
+          if (rec) {
+            const c = calc(rec.done, rec.total);
+            if (c.totalOk && c.doneOk) stage = c.stage;
+          }
+        }
+        if (stage === 'flower') fullDays++;
+
+        const day = document.createElement('div');
+        day.className = 'day' + (isToday ? ' today' : '');
+        day.setAttribute('role', 'img');
+        day.setAttribute('aria-label', (isToday ? '오늘' : DAY_NAMES[d.getDay()] + '요일') + ': ' + (stage ? STAGE_NAMES[stage] : '기록 없음'));
+
+        const petCell = document.createElement('div');
+        petCell.className = 'day-pet';
+        if (stage) {
+          const mini = petBox.querySelector('svg[data-stage="' + stage + '"]').cloneNode(true);
+          mini.removeAttribute('hidden');
+          mini.removeAttribute('role');
+          mini.removeAttribute('aria-label');
+          mini.setAttribute('aria-hidden', 'true');
+          mini.setAttribute('width', '44');
+          mini.setAttribute('height', '44');
+          petCell.appendChild(mini);
+        } else {
+          const soil = document.createElement('span');
+          soil.className = 'soil';
+          petCell.appendChild(soil);
+        }
+
+        const label = document.createElement('span');
+        label.className = 'day-label';
+        label.setAttribute('aria-hidden', 'true');
+        label.textContent = isToday ? '오늘' : DAY_NAMES[d.getDay()];
+
+        day.append(petCell, label);
+        daysBox.appendChild(day);
+      }
+
+      gardenCount.textContent = '활짝 핀 날 ' + fullDays + '일';
     }
 
-    function update() {
-      const n = readNumbers();
-      let ratio = 0;
+    function update(fromButton) {
+      const c = calc(doneInput.value, totalInput.value);
+      const grew = STAGE_RANK[c.stage] > STAGE_RANK[currentStage];
+      const finished = c.stage === 'flower' && currentStage !== 'flower';
+
+      // 안내 문구
       note.className = '';
       note.textContent = '할 일을 끝낼 때마다 눌러 주세요';
-
-      if (!n.totalOk) {
+      if (!c.totalOk) {
         note.className = 'warn';
         note.textContent = '오늘 할 일 개수를 먼저 적어 주세요';
-      } else if (!n.doneOk) {
+      } else if (!c.doneOk) {
         note.className = 'warn';
         note.textContent = '완료한 일은 0 이상의 정수로 적어 주세요';
-      } else if (n.done > n.total) {
-        ratio = 1;
+      } else if (c.done > c.total) {
         note.className = 'warn';
         note.textContent = '완료한 일이 오늘 할 일보다 많아요';
+      } else if (c.done === c.total) {
+        note.textContent = '오늘 할 일을 모두 완료했어요!';
+      }
+
+      // 말풍선
+      if (!c.totalOk) {
+        bubbleText.textContent = '오늘 할 일이 몇 개인지 알려 줘';
+      } else if (grew) {
+        bubbleText.textContent = '자랐다! ' + STAGE_NAMES[c.stage] + ' 단계가 됐어';
+        clearTimeout(grewTimer);
+        grewTimer = setTimeout(function () {
+          bubbleText.textContent = pick(LINES[currentStage]);
+          replay(bubble, 'pop');
+        }, 1600);
       } else {
-        ratio = n.done / n.total;
-        if (n.done === n.total) note.textContent = '오늘 할 일을 모두 완료했어요!';
+        bubbleText.textContent = pick(LINES[c.stage]);
       }
 
-      let stage = 'seed';
-      let stageName = '씨앗';
-      let msg = '오늘 할 일, 하나만 같이 해 볼까?';
-
-      if (!n.totalOk) {
-        msg = '오늘 할 일이 몇 개인지 알려 줘';
-      } else if (ratio >= 1) {
-        stage = 'flower'; stageName = '활짝 꽃'; msg = '오늘 할 일 다 끝! 최고야';
-      } else if (ratio >= 0.5) {
-        stage = 'bud'; stageName = '꽃봉오리'; msg = '거의 다 왔어, 조금만 더!';
-      } else if (ratio > 0) {
-        stage = 'sprout'; stageName = '새싹'; msg = '쑥쑥 자라는 중이야';
-      }
-
-      const percent = Math.round(ratio * 100);
+      // 링, 숫자, 단계
+      const percent = Math.round(c.ratio * 100);
+      ring.style.setProperty('--p', percent);
       percentText.textContent = percent + '%';
-      ring.style.background = 'conic-gradient(#d93a75 ' + (percent * 3.6) + 'deg, #f3e6ea 0deg)';
-      badge.textContent = stageName + ' 단계';
-      bubble.textContent = msg;
-      completeButton.disabled = !(n.totalOk && n.doneOk && n.done < n.total);
-      showStage(stage);
+      badge.textContent = STAGE_NAMES[c.stage];
+      completeButton.disabled = !(c.totalOk && c.doneOk && c.done < c.total);
+      showStage(c.stage);
+
+      // 움직임
+      replay(bubble, 'pop');
+      if (fromButton || grew) replay(petBox, 'bounce');
+      if (grew) sparkle();
+      if (finished) petalShower();
+
+      currentStage = c.stage;
+      renderGarden(c.stage, c.totalOk && c.doneOk);
     }
 
-    // 완료 버튼: 완료한 일을 1 올려요.
     completeButton.addEventListener('click', function () {
-      const n = readNumbers();
-      if (n.totalOk && n.doneOk && n.done < n.total) {
-        doneInput.value = String(n.done + 1);
-        update();
+      const c = calc(doneInput.value, totalInput.value);
+      if (c.totalOk && c.doneOk && c.done < c.total) {
+        doneInput.value = String(c.done + 1);
+        replay(completeButton, 'press');
+        update(true);
         save();
       }
     });
 
-    doneInput.addEventListener('input', function () { update(); save(); });
-    totalInput.addEventListener('input', function () { update(); save(); });
+    doneInput.addEventListener('input', function () { update(false); save(); });
+    totalInput.addEventListener('input', function () { update(false); save(); });
 
-    load();
-    update();
+    // ---------- 시작 ----------
+    (function start() {
+      const now = new Date();
+      document.getElementById('date').textContent =
+        (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' + DAY_NAMES[now.getDay()] + '요일';
+
+      const rec = readRecord(now);
+      if (rec) {
+        doneInput.value = rec.done ?? '';
+        totalInput.value = rec.total ?? '';
+      }
+      // 처음 열 때는 효과 없이 지금 단계로 시작해요.
+      currentStage = calc(doneInput.value, totalInput.value).stage;
+      update(false);
+    })();
   </script>
 </body>
 </html>
