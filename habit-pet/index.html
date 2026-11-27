@@ -112,8 +112,8 @@
     .progress {
       display: flex;
       align-items: center;
-      gap: 18px;
-      padding: 6px 4px 0;
+      gap: 14px;
+      padding: 6px 2px 0;
     }
 
     @property --p {
@@ -124,9 +124,9 @@
 
     .ring {
       --p: 0;
-      flex: 0 0 148px;
-      width: 148px;
-      height: 148px;
+      flex: 0 0 160px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
       background: conic-gradient(#e0457f calc(var(--p) * 3.6deg), #f6e9ee 0deg);
       display: flex;
@@ -136,8 +136,8 @@
     }
 
     .ring-inner {
-      width: 120px;
-      height: 120px;
+      width: 134px;
+      height: 134px;
       border-radius: 50%;
       background: #fffcf6;
       display: flex;
@@ -164,7 +164,7 @@
     }
 
     /* 숫자 칸: 눌러서 적을 수 있는 칸처럼 보이게 해요. */
-    .fraction { align-items: center; gap: 6px; }
+    .fraction { align-items: center; gap: 5px; margin-top: 6px; }
 
     .field {
       display: flex;
@@ -174,7 +174,8 @@
     }
 
     .fraction input {
-      height: 42px;
+      min-width: 0;
+      height: 38px;
       border-radius: 12px;
       background: #f6e9ee;
       border: 2px solid transparent;
@@ -182,8 +183,8 @@
       color: #2b2b33;
     }
 
-    #done { width: 46px; font-size: 26px; }
-    #total { width: 46px; font-size: 26px; }
+    #done { width: 40px; font-size: 23px; }
+    #total { width: 40px; font-size: 23px; }
 
     #total::placeholder { color: #e0457f; opacity: 1; }
 
